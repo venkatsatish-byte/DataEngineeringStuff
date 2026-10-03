@@ -54,7 +54,7 @@ build() {
     echo "::endgroup::"
     return 1
   fi
-  grep -cE "warning:" "$LOGS/$log" | xargs -I{} echo "$scheme built ({} warning lines)"
+  echo "$scheme built ($(grep -c "warning:" "$LOGS/$log" || true) warning lines)"
 }
 
 build GlucoseCompanion "id=$IPHONE" ios-build.log
