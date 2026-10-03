@@ -1,0 +1,82 @@
+name: GlucoseCompanion
+
+on:
+  push:
+    paths:
+      - "GlucoseCompanion/**"
+      - ".github/workflows/glucosecompanion.yml"
+  pull_request:
+    paths:
+      - "GlucoseCompanion/**"
+  workflow_dispatch:
+
+concurrency:
+  group: glucosecompanion-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: GlucoseCompanion
+
+jobs:
+  package:
+    name: GlucoseKit tests and sample report
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: xcodebuild -version && swift --version
+      - name: Unit tests
+        working-directory: GlucoseCompanion/Packages/GlucoseKit
+        run: swift test 2>&1 | tee test.log
+      - name: Sample report (CGM)
+        working-directory: GlucoseCompanion/Packages/GlucoseKit
+        run: swift run -q glucose-report | tee report-cgm.txt
+      - name: Sample report (fingerstick, mmol/L)
+        working-directory: GlucoseCompanion/Packages/GlucoseKit
+        run: swift run -q glucose-report --fingerstick --mmol | tee report-fingerstick.txt
+      - name: Job summary
+        working-directory: GlucoseCompanion/Packages/GlucoseKit
+        run: |
+          {
+            echo "## Unit tests"
+            echo '```'
+            grep -E "Executed|error|failed" test.log | tail -5
+            echo '```'
+            echo "## Sample report (CGM)"
+            echo '```'
+            cat report-cgm.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  app:
+    name: Build iPhone and Watch apps, capture screenshots
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Build and screenshot
+        run: ./scripts/build-and-screenshot.sh
+      - name: Upload screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: glucosecompanion-screenshots
+          path: |
+            GlucoseCompanion/docs/screenshots
+            GlucoseCompanion/build/logs
+      - name: Commit screenshots to the branch
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots
+          if git diff --cached --quiet; then echo "No screenshot changes"; exit 0; fi
+          git commit -m "Update GlucoseCompanion screenshots [skip ci]"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"

@@ -1,0 +1,186 @@
+# Generate the Xcode project with:  xcodegen generate
+# Before running on a device, set DEVELOPMENT_TEAM, APP_BUNDLE_ID and
+# APP_GROUP_ID below to your own values.
+name: GlucoseCompanion
+options:
+  bundleIdPrefix: com.example
+  createIntermediateGroups: true
+  developmentLanguage: en
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    APP_BUNDLE_ID: com.example.glucosecompanion
+    APP_GROUP_ID: group.com.example.glucosecompanion
+
+packages:
+  GlucoseKit:
+    path: Packages/GlucoseKit
+
+targets:
+  GlucoseCompanion:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - Shared
+    dependencies:
+      - package: GlucoseKit
+        product: GlucoseCore
+      - package: GlucoseKit
+        product: GlucoseHealth
+      - package: GlucoseKit
+        product: GlucoseStorage
+      - target: GlucoseWidgets
+      - target: GlucoseCompanionWatch
+        embed: true
+        codeSign: true
+        copy:
+          destination: productsDirectory
+          subpath: $(CONTENTS_FOLDER_PATH)/Watch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID)
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Config/App-Info.plist
+      properties:
+        CFBundleDisplayName: GlucoseCompanion
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        GCAppGroupIdentifier: $(APP_GROUP_ID)
+        NSHealthShareUsageDescription: >-
+          GlucoseCompanion reads your blood glucose, steps, exercise minutes, workouts,
+          carbohydrates and water to show your trends and how meals and activity affect
+          your glucose. Your data stays on your devices.
+        NSHealthUpdateUsageDescription: >-
+          GlucoseCompanion saves the glucose readings, meal carbohydrates and water you
+          enter to Apple Health, so they're available in the Health app and to your
+          other apps.
+    entitlements:
+      path: Config/GlucoseCompanion.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.developer.healthkit.background-delivery: true
+        com.apple.security.application-groups:
+          - $(APP_GROUP_ID)
+
+  GlucoseWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widgets
+      - Shared
+    dependencies:
+      - package: GlucoseKit
+        product: GlucoseCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).widgets
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Config/Widgets-iOS-Info.plist
+      properties:
+        CFBundleDisplayName: GlucoseCompanion
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        GCAppGroupIdentifier: $(APP_GROUP_ID)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Config/GlucoseWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - $(APP_GROUP_ID)
+
+  GlucoseCompanionWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - Watch
+      - Shared
+    dependencies:
+      - package: GlucoseKit
+        product: GlucoseCore
+      - package: GlucoseKit
+        product: GlucoseHealth
+      - target: GlucoseWatchWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).watchkitapp
+    info:
+      path: Config/Watch-Info.plist
+      properties:
+        CFBundleDisplayName: GlucoseCompanion
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: $(APP_BUNDLE_ID)
+        WKRunsIndependentlyOfCompanionApp: true
+        GCAppGroupIdentifier: $(APP_GROUP_ID)
+        NSHealthShareUsageDescription: >-
+          GlucoseCompanion reads your blood glucose to show your latest reading and
+          today's time in range on your wrist.
+        NSHealthUpdateUsageDescription: >-
+          GlucoseCompanion saves the glucose readings, meals and water you log on your
+          Apple Watch to Apple Health.
+    entitlements:
+      path: Config/GlucoseCompanionWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.developer.healthkit.background-delivery: true
+        com.apple.security.application-groups:
+          - $(APP_GROUP_ID)
+
+  GlucoseWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - Widgets
+      - Shared
+    dependencies:
+      - package: GlucoseKit
+        product: GlucoseCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).watchkitapp.widgets
+    info:
+      path: Config/Widgets-watchOS-Info.plist
+      properties:
+        CFBundleDisplayName: GlucoseCompanion
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        GCAppGroupIdentifier: $(APP_GROUP_ID)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Config/GlucoseWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - $(APP_GROUP_ID)
+
+schemes:
+  GlucoseCompanion:
+    build:
+      targets:
+        GlucoseCompanion: all
+    run:
+      config: Debug
+  GlucoseCompanionWatch:
+    build:
+      targets:
+        GlucoseCompanionWatch: all
+    run:
+      config: Debug

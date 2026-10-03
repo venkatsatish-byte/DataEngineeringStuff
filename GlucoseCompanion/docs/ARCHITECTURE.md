@@ -165,9 +165,9 @@ GlucoseCompanion/
 ## 5. Data model
 
 All glucose values are **stored in mg/dL** as `Double` and converted only for
-display. mmol/L = mg/dL ÷ 18.0182, based on glucose's molar mass of
-180.16 g/mol. That matches how HealthKit converts between the two units, so
-values never drift when the user switches units.
+display. mmol/L = mg/dL ÷ 18.0156, from glucose's molar mass of
+180.156 g/mol. HealthKit uses the same molar mass, so values never drift when
+the user switches units.
 
 ### Value types (GlucoseKit/Core)
 
@@ -205,8 +205,8 @@ struct TargetRange: Codable {
 | `MealItem` | `name`, `carbsGrams`, `servings` | v1 adds a food-database reference. |
 | `MealResponse` | `meal`, `baselineMgdL`, `peakMgdL`, `delta`, `minutesToPeak`, `hadWalkAfter`, `confidence` | Computed and cached after the 2–3-hour window closes. `confidence` is low with fingersticks. |
 | `DailySummary` | `date`, `mean`, `inRangeFraction`, `lows`, `highs`, `readingCount`, `cgmCoverage`, `steps`, `activeMinutes`, `sleepHours` | Cached per day so 30-day charts stay instant; rebuilt when its inputs change. |
-| `Reminder` | `id`, `kind` (glucoseCheck/medication/activity/hydration/postMealWalk), `title`, `times`, `weekdays`, `isEnabled` | Medication reminders hold a free-text label only. There is no dose field, by design. |
-| `UserProfile` | `unit`, `targets: TargetRange`, `stepGoal`, `activeMinutesGoal`, `usesCGM`, `disclaimerAcceptedVersion`, `disclaimerAcceptedAt` | One row. |
+| `Reminder` | `id`, `kind` (glucoseCheck/medication/activity/hydration/postMealWalk), `title`, `hour`, `minute`, `weekdays`, `minutesAfterMeal`, `isEnabled` | Stored as JSON in the App Group defaults. Medication reminders hold a free-text label only. There is no dose field, by design. |
+| `UserProfile` | `unit`, `targets: TargetRange`, `stepGoal`, `activeMinutesGoal`, `usesCGM`, care contact, `acceptedDisclaimerVersion`, `acceptedDisclaimerAt` | Stored as JSON in the App Group defaults so widgets and the Watch can read it. |
 
 ### What lives where in Apple Health
 
@@ -296,8 +296,10 @@ struct TargetRange: Codable {
 - **Privacy declarations are minimal.** `PrivacyInfo.xcprivacy` lists only the
   required-reason APIs actually used. The App Store privacy label is
   "Data Not Collected".
-- **Protected storage.** The SwiftData store and meal photos use
-  `NSFileProtectionComplete`, so they're unreadable while the phone is locked.
+- **Protected storage.** The SwiftData store and meal photos use iOS's default
+  data protection (encrypted until the phone is first unlocked after a restart).
+  Full `NSFileProtectionComplete` would stop background Apple Health updates
+  from saving while the phone is locked.
 - **Optional app lock.** A Face ID lock is optional, off by default.
 - **No data leaves the device.** No analytics, crash reporting with health
   payloads, or advertising SDKs. The PDF report is only shared when the user taps
