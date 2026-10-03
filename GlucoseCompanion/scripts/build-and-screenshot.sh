@@ -11,6 +11,8 @@ mkdir -p "$OUT" "$LOGS"
 BUNDLE_ID=com.example.glucosecompanion
 
 xcodegen generate
+# Report every compile error in one run instead of stopping at the first.
+defaults write com.apple.dt.Xcode IDEBuildingContinueBuildingAfterErrors -bool YES
 
 # Pick the newest available iPhone and Apple Watch simulators.
 pick() {
@@ -47,8 +49,8 @@ build() {
        -destination "$destination" -derivedDataPath build/DerivedData \
        CODE_SIGNING_ALLOWED=NO build > "$LOGS/$log" 2>&1; then
     echo "::group::$scheme build errors"
-    grep -E "error:|warning: .*deprecated" "$LOGS/$log" | sort -u | head -80 || true
-    tail -40 "$LOGS/$log"
+    grep -E "error:" "$LOGS/$log" | sort -u | head -80 || true
+    grep -A3 "The following build commands failed" "$LOGS/$log" || true
     echo "::endgroup::"
     return 1
   fi

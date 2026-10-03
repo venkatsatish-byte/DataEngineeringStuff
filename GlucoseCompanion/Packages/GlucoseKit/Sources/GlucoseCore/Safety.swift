@@ -32,6 +32,13 @@ public struct UrgentAlert: Identifiable, Equatable, Sendable {
     public var mgdL: Double
     public var readingDate: Date
 
+    public init(readingID: UUID, kind: Kind, mgdL: Double, readingDate: Date) {
+        self.readingID = readingID
+        self.kind = kind
+        self.mgdL = mgdL
+        self.readingDate = readingDate
+    }
+
     public var title: String {
         kind == .low ? "Your blood sugar is very low" : "Your blood sugar is very high"
     }
