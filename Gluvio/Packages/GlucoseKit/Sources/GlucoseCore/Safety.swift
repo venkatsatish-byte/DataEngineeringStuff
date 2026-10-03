@@ -9,7 +9,7 @@ public enum SafetyCopy {
     public static let disclaimerTitle = "Before you start"
 
     public static let disclaimerPoints: [String] = [
-        "GlucoseCompanion helps you track and understand your blood sugar. It is not a medical device and does not diagnose or treat any condition.",
+        "Gluvio helps you track and understand your blood sugar. It is not a medical device and does not diagnose or treat any condition.",
         "It never gives insulin or medication advice. Keep following the plan you agreed with your care team.",
         "Talk to your doctor before changing your diet, exercise or medication.",
         "Readings from Apple Health can arrive late. Your CGM or meter's own app remains your alarm for highs and lows.",
@@ -20,7 +20,7 @@ public enum SafetyCopy {
         "Not a substitute for medical care. Talk to your doctor before changing your diet, exercise or medication."
 
     public static let privacySummary =
-        "Your health data stays on this device and in your own Apple Health. GlucoseCompanion has no account, no servers and no analytics, and never shares your data."
+        "Your health data stays on this device and in your own Apple Health. Gluvio has no account, no servers and no analytics, and never shares your data."
 }
 
 public struct UrgentAlert: Identifiable, Equatable, Sendable {

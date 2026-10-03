@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct GlucoseCompanionApp: App {
+struct GluvioApp: App {
     @State private var host = AppHost()
 
     var body: some Scene {

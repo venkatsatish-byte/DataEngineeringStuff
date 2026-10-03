@@ -1,4 +1,4 @@
-# GlucoseCompanion (working name)
+# Gluvio
 
 An iPhone and Apple Watch app that helps people with Type 2 diabetes track
 blood sugar, understand their daily trends, and learn how meals and activity
@@ -69,18 +69,18 @@ Needs a Mac with Xcode 16 or newer and [XcodeGen](https://github.com/yonaskolb/X
 
 ```bash
 brew install xcodegen
-cd GlucoseCompanion
+cd Gluvio
 xcodegen generate
-open GlucoseCompanion.xcodeproj
+open Gluvio.xcodeproj
 ```
 
-Then pick the **GlucoseCompanion** scheme and an iPhone simulator, and run.
+Then pick the **Gluvio** scheme and an iPhone simulator, and run.
 To explore with sample data, tap **Explore with sample data** on the welcome
 screen, or add `-demoMode YES` under the scheme's launch arguments.
 
 To run on your own iPhone and Apple Watch, edit `project.yml`:
 - `DEVELOPMENT_TEAM`: your Apple Developer team ID
-- `APP_BUNDLE_ID`: an identifier you own, e.g. `com.yourname.glucosecompanion`
+- `APP_BUNDLE_ID`: an identifier you own, e.g. `com.yourname.gluvio`
 - `APP_GROUP_ID`: `group.` + the same identifier
 
 HealthKit needs a paid Apple Developer account.

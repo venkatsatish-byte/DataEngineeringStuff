@@ -39,7 +39,7 @@ dayFormat.dateFormat = "EEE MMM d"
 
 print("""
 ═══════════════════════════════════════════════════════════════
- GlucoseCompanion — sample report (\(continuous ? "CGM" : "fingerstick") demo data)
+ Gluvio — sample report (\(continuous ? "CGM" : "fingerstick") demo data)
  \(SafetyCopy.shortDisclaimer)
 ═══════════════════════════════════════════════════════════════
 """)

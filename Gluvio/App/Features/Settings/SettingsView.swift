@@ -66,7 +66,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Apple Health")
                 } footer: {
-                    Text("To change what GlucoseCompanion can read or write, open Health → your profile → Apps → GlucoseCompanion.")
+                    Text("To change what Gluvio can read or write, open Health → your profile → Apps → Gluvio.")
                 }
 
                 Section("About") {

@@ -181,7 +181,7 @@ struct ReportHeader: View {
 
 struct ReportFooter: View {
     var body: some View {
-        Text("Created with GlucoseCompanion from the patient's own data. \(SafetyCopy.shortDisclaimer)")
+        Text("Created with Gluvio from the patient's own data. \(SafetyCopy.shortDisclaimer)")
             .font(.system(size: 8))
             .foregroundStyle(.secondary)
     }

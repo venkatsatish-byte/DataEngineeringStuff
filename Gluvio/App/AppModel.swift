@@ -55,8 +55,8 @@ final class AppModel {
         selectedTab = options.initialTab
 
         let defaults: UserDefaults
-        if options.demoMode, let demoDefaults = UserDefaults(suiteName: "GlucoseCompanion.demo") {
-            demoDefaults.removePersistentDomain(forName: "GlucoseCompanion.demo")
+        if options.demoMode, let demoDefaults = UserDefaults(suiteName: "Gluvio.demo") {
+            demoDefaults.removePersistentDomain(forName: "Gluvio.demo")
             defaults = demoDefaults
         } else {
             defaults = AppGroup.defaults
@@ -158,7 +158,7 @@ final class AppModel {
     @discardableResult
     func logGlucose(mgdL: Double, date: Date, context: ReadingContext, note: String) async -> Bool {
         let sample = GlucoseSample(date: date, mgdL: mgdL, context: context, source: .manual,
-                                   sourceName: "GlucoseCompanion", note: note)
+                                   sourceName: "Gluvio", note: note)
         do {
             try await health.save(sample)
             try repository.upsert([sample])

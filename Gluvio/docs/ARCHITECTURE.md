@@ -128,10 +128,10 @@ View ──binds──▶ ViewModel (@Observable, @MainActor)
 ## 4. Folder structure
 
 ```
-GlucoseCompanion/
+Gluvio/
 ├── project.yml                      XcodeGen spec for all targets
 ├── App/                             iOS app target
-│   ├── GlucoseCompanionApp.swift
+│   ├── GluvioApp.swift
 │   ├── AppEnvironment.swift         dependency container
 │   ├── Features/
 │   │   ├── Onboarding/              welcome, disclaimer, targets, permission primers

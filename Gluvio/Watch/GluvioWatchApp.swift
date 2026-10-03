@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct GlucoseCompanionWatchApp: App {
+struct GluvioWatchApp: App {
     @State private var model = WatchModel()
 
     var body: some Scene {

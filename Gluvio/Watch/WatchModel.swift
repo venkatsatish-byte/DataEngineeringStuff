@@ -72,7 +72,7 @@ final class WatchModel {
     // MARK: Quick log
 
     func logGlucose(mgdL: Double, context: ReadingContext) async -> Bool {
-        let sample = GlucoseSample(date: .now, mgdL: mgdL, context: context, source: .manual, sourceName: "GlucoseCompanion")
+        let sample = GlucoseSample(date: .now, mgdL: mgdL, context: context, source: .manual, sourceName: "Gluvio")
         do {
             try await health.save(sample)
         } catch {

@@ -112,7 +112,7 @@ Kept short here; this becomes a full checklist before submission.
 These change what gets built, so they come before code.
 
 1. **Where should the code live?**
-   It currently sits in `GlucoseCompanion/` inside DataEngineeringStuff. A
+   It currently sits in `Gluvio/` inside DataEngineeringStuff. A
    dedicated repository would be cleaner for an app; create an empty one and it
    can be moved there.
 2. **What should out-of-range alerts promise?**
@@ -137,4 +137,4 @@ These change what gets built, so they come before code.
    iOS and watchOS apps can only be built and run there; the HealthKit entitlement
    needs a paid account.
 8. **What's the name?**
-   "GlucoseCompanion" is a placeholder.
+   Decided: **Gluvio**.

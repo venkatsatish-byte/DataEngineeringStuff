@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 OUT=docs/screenshots
 LOGS=build/logs
 mkdir -p "$OUT" "$LOGS"
-BUNDLE_ID=com.example.glucosecompanion
+BUNDLE_ID=com.example.gluvio
 
 # Runs a command, killing it after N seconds so a stuck simulator call can't
 # hang CI. Returns the command's status, or 124 on timeout.
@@ -60,7 +60,7 @@ echo "Watch simulator:  ${WATCH:-none}"
 
 build() {
   local scheme=$1 destination=$2 log=$3
-  if ! xcodebuild -project GlucoseCompanion.xcodeproj -scheme "$scheme" -configuration Debug \
+  if ! xcodebuild -project Gluvio.xcodeproj -scheme "$scheme" -configuration Debug \
        -destination "$destination" -derivedDataPath build/DerivedData \
        CODE_SIGNING_ALLOWED=NO build > "$LOGS/$log" 2>&1; then
     echo "::group::$scheme build errors"
@@ -72,14 +72,14 @@ build() {
   echo "$scheme built ($(grep -c "warning:" "$LOGS/$log" || true) warning lines)"
 }
 
-build GlucoseCompanion "id=$IPHONE" ios-build.log
+build Gluvio "id=$IPHONE" ios-build.log
 if [ -n "$WATCH" ]; then
-  build GlucoseCompanionWatch "id=$WATCH" watch-build.log
+  build GluvioWatch "id=$WATCH" watch-build.log
 else
-  build GlucoseCompanionWatch "generic/platform=watchOS Simulator" watch-build.log
+  build GluvioWatch "generic/platform=watchOS Simulator" watch-build.log
 fi
 
-APP=build/DerivedData/Build/Products/Debug-iphonesimulator/GlucoseCompanion.app
+APP=build/DerivedData/Build/Products/Debug-iphonesimulator/Gluvio.app
 echo "Embedded watch app:"; ls "$APP/Watch" 2>/dev/null || echo "  (none)"
 echo "Embedded widget extension:"; ls "$APP/PlugIns" 2>/dev/null || echo "  (none)"
 
@@ -119,7 +119,7 @@ limit 60 xcrun simctl shutdown "$IPHONE" || true
 
 # Watch screenshot.
 if [ -n "$WATCH" ]; then
-  WATCH_APP=build/DerivedData/Build/Products/Debug-watchsimulator/GlucoseCompanionWatch.app
+  WATCH_APP=build/DerivedData/Build/Products/Debug-watchsimulator/GluvioWatch.app
   echo "Booting Watch simulator"
   xcrun simctl boot "$WATCH" 2>/dev/null || true
   limit 300 xcrun simctl bootstatus "$WATCH" -b > /dev/null || echo "  bootstatus didn't finish; continuing"

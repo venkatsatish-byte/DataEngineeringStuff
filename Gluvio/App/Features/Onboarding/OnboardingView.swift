@@ -86,7 +86,7 @@ struct OnboardingView: View {
         case .health:
             Image(systemName: "heart.text.square.fill").font(.system(size: 56)).foregroundStyle(.pink)
             Text("Connect Apple Health").font(.largeTitle.bold())
-            Text("GlucoseCompanion reads:").font(.headline)
+            Text("Gluvio reads:").font(.headline)
             Label("Blood glucose from your CGM, meter and manual entries", systemImage: "drop")
             Label("Steps, exercise minutes and workouts, to show how activity affects you", systemImage: "figure.walk")
             Label("Carbohydrates and water you log", systemImage: "fork.knife")

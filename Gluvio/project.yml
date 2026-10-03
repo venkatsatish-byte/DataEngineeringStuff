@@ -1,7 +1,7 @@
 # Generate the Xcode project with:  xcodegen generate
 # Before running on a device, set DEVELOPMENT_TEAM, APP_BUNDLE_ID and
 # APP_GROUP_ID below to your own values.
-name: GlucoseCompanion
+name: Gluvio
 options:
   bundleIdPrefix: com.example
   createIntermediateGroups: true
@@ -17,15 +17,15 @@ settings:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: ""
     CODE_SIGN_STYLE: Automatic
-    APP_BUNDLE_ID: com.example.glucosecompanion
-    APP_GROUP_ID: group.com.example.glucosecompanion
+    APP_BUNDLE_ID: com.example.gluvio
+    APP_GROUP_ID: group.com.example.gluvio
 
 packages:
   GlucoseKit:
     path: Packages/GlucoseKit
 
 targets:
-  GlucoseCompanion:
+  Gluvio:
     type: application
     platform: iOS
     sources:
@@ -39,7 +39,7 @@ targets:
       - package: GlucoseKit
         product: GlucoseStorage
       - target: GlucoseWidgets
-      - target: GlucoseCompanionWatch
+      - target: GluvioWatch
         embed: true
         codeSign: true
         copy:
@@ -52,7 +52,7 @@ targets:
     info:
       path: Config/App-Info.plist
       properties:
-        CFBundleDisplayName: GlucoseCompanion
+        CFBundleDisplayName: Gluvio
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
@@ -60,15 +60,15 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         GCAppGroupIdentifier: $(APP_GROUP_ID)
         NSHealthShareUsageDescription: >-
-          GlucoseCompanion reads your blood glucose, steps, exercise minutes, workouts,
+          Gluvio reads your blood glucose, steps, exercise minutes, workouts,
           carbohydrates and water to show your trends and how meals and activity affect
           your glucose. Your data stays on your devices.
         NSHealthUpdateUsageDescription: >-
-          GlucoseCompanion saves the glucose readings, meal carbohydrates and water you
+          Gluvio saves the glucose readings, meal carbohydrates and water you
           enter to Apple Health, so they're available in the Health app and to your
           other apps.
     entitlements:
-      path: Config/GlucoseCompanion.entitlements
+      path: Config/Gluvio.entitlements
       properties:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
@@ -92,7 +92,7 @@ targets:
     info:
       path: Config/Widgets-iOS-Info.plist
       properties:
-        CFBundleDisplayName: GlucoseCompanion
+        CFBundleDisplayName: Gluvio
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         GCAppGroupIdentifier: $(APP_GROUP_ID)
@@ -104,7 +104,7 @@ targets:
         com.apple.security.application-groups:
           - $(APP_GROUP_ID)
 
-  GlucoseCompanionWatch:
+  GluvioWatch:
     type: application
     platform: watchOS
     sources:
@@ -122,7 +122,7 @@ targets:
     info:
       path: Config/Watch-Info.plist
       properties:
-        CFBundleDisplayName: GlucoseCompanion
+        CFBundleDisplayName: Gluvio
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
@@ -130,13 +130,13 @@ targets:
         WKRunsIndependentlyOfCompanionApp: true
         GCAppGroupIdentifier: $(APP_GROUP_ID)
         NSHealthShareUsageDescription: >-
-          GlucoseCompanion reads your blood glucose to show your latest reading and
+          Gluvio reads your blood glucose to show your latest reading and
           today's time in range on your wrist.
         NSHealthUpdateUsageDescription: >-
-          GlucoseCompanion saves the glucose readings, meals and water you log on your
+          Gluvio saves the glucose readings, meals and water you log on your
           Apple Watch to Apple Health.
     entitlements:
-      path: Config/GlucoseCompanionWatch.entitlements
+      path: Config/GluvioWatch.entitlements
       properties:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
@@ -159,7 +159,7 @@ targets:
     info:
       path: Config/Widgets-watchOS-Info.plist
       properties:
-        CFBundleDisplayName: GlucoseCompanion
+        CFBundleDisplayName: Gluvio
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         GCAppGroupIdentifier: $(APP_GROUP_ID)
@@ -172,15 +172,15 @@ targets:
           - $(APP_GROUP_ID)
 
 schemes:
-  GlucoseCompanion:
+  Gluvio:
     build:
       targets:
-        GlucoseCompanion: all
+        Gluvio: all
     run:
       config: Debug
-  GlucoseCompanionWatch:
+  GluvioWatch:
     build:
       targets:
-        GlucoseCompanionWatch: all
+        GluvioWatch: all
     run:
       config: Debug
