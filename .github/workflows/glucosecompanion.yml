@@ -16,6 +16,8 @@ concurrency:
 
 defaults:
   run:
+    # "shell: bash" adds -o pipefail, so a failure piped into tee still fails the step.
+    shell: bash
     working-directory: GlucoseCompanion
 
 jobs:

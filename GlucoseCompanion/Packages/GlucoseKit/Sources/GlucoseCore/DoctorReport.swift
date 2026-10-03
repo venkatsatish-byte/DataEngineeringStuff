@@ -27,20 +27,21 @@ public struct DoctorReport: Sendable {
         days: Int, now: Date = .now, calendar: Calendar = .current
     ) {
         let start = calendar.date(byAdding: .day, value: -(days - 1), to: calendar.startOfDay(for: now)) ?? now
-        period = DateInterval(start: start, end: now)
-        self.days = days
-        unit = profile.unit
-        targets = profile.targets
+        let period = DateInterval(start: start, end: now)
         let inPeriod = samples.filter { period.contains($0.date) }
-        stats = GlucoseAnalytics.stats(for: inPeriod, in: period, targets: profile.targets)
-        a1c = GlucoseAnalytics.estimateA1C(from: samples, now: now, calendar: calendar)
-        daily = GlucoseAnalytics.dailySummaries(for: inPeriod, days: days, targets: profile.targets, now: now, calendar: calendar)
-
         let lines = meals.filter { period.contains($0.date) }.compactMap { meal in
             GlucoseAnalytics.mealResponse(for: meal, samples: inPeriod, activities: activities, now: now)
                 .map { MealLine(meal: meal, response: $0) }
         }.filter(\.response.isComplete)
         let byRise = lines.sorted { $0.response.rise > $1.response.rise }
+
+        self.period = period
+        self.days = days
+        unit = profile.unit
+        targets = profile.targets
+        stats = GlucoseAnalytics.stats(for: inPeriod, in: period, targets: profile.targets)
+        a1c = GlucoseAnalytics.estimateA1C(from: samples, now: now, calendar: calendar)
+        daily = GlucoseAnalytics.dailySummaries(for: inPeriod, days: days, targets: profile.targets, now: now, calendar: calendar)
         biggestRises = Array(byRise.prefix(3))
         gentlestMeals = Array(byRise.reversed().prefix(3))
         walkInsight = GlucoseAnalytics.walkInsight(from: lines.map(\.response))
