@@ -139,7 +139,11 @@ struct LatestReadingWidgetView: View {
         #endif
 
         default:
+            #if os(watchOS)
+            SystemReadingView(entry: entry, showChart: false)
+            #else
             SystemReadingView(entry: entry, showChart: family == .systemMedium)
+            #endif
         }
     }
 }
