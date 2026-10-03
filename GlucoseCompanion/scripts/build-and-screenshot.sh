@@ -10,6 +10,21 @@ LOGS=build/logs
 mkdir -p "$OUT" "$LOGS"
 BUNDLE_ID=com.example.glucosecompanion
 
+# Runs a command, killing it after N seconds so a stuck simulator call can't
+# hang CI. Returns the command's status, or 124 on timeout.
+limit() {
+  local secs=$1; shift
+  "$@" &
+  local pid=$!
+  ( sleep "$secs"; if kill -0 "$pid" 2>/dev/null; then echo "  timed out after ${secs}s: $*"; kill -9 "$pid" 2>/dev/null; fi ) &
+  local watcher=$!
+  local status=0
+  wait "$pid" || status=$?
+  kill "$watcher" 2>/dev/null || true
+  wait "$watcher" 2>/dev/null || true
+  return $status
+}
+
 xcodegen generate
 # Report every compile error in one run instead of stopping at the first.
 defaults write com.apple.dt.Xcode IDEBuildingContinueBuildingAfterErrors -bool YES
@@ -69,19 +84,25 @@ echo "Embedded watch app:"; ls "$APP/Watch" 2>/dev/null || echo "  (none)"
 echo "Embedded widget extension:"; ls "$APP/PlugIns" 2>/dev/null || echo "  (none)"
 
 # iPhone screenshots.
+echo "Booting iPhone simulator"
 xcrun simctl boot "$IPHONE" 2>/dev/null || true
-xcrun simctl bootstatus "$IPHONE" -b > /dev/null
-xcrun simctl status_bar "$IPHONE" override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 || true
-xcrun simctl install "$IPHONE" "$APP"
+limit 300 xcrun simctl bootstatus "$IPHONE" -b > /dev/null || echo "  bootstatus didn't finish; continuing"
+limit 30 xcrun simctl status_bar "$IPHONE" override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 || true
+echo "Installing app"
+limit 120 xcrun simctl install "$IPHONE" "$APP"
 
 shot() {
   local name=$1; shift
-  xcrun simctl terminate "$IPHONE" "$BUNDLE_ID" 2>/dev/null || true
-  xcrun simctl launch "$IPHONE" "$BUNDLE_ID" -demoMode YES "$@" > /dev/null
+  echo "Screenshot: $name"
+  limit 30 xcrun simctl terminate "$IPHONE" "$BUNDLE_ID" 2>/dev/null || true
+  if ! limit 60 xcrun simctl launch "$IPHONE" "$BUNDLE_ID" -demoMode YES "$@" > /dev/null; then
+    echo "  launch failed for $name"
+    return 0
+  fi
   sleep 6
-  xcrun simctl io "$IPHONE" screenshot --type=png "$OUT/iphone-$name.png" > /dev/null
-  sips -Z 1400 "$OUT/iphone-$name.png" > /dev/null
-  echo "Captured iphone-$name.png"
+  limit 60 xcrun simctl io "$IPHONE" screenshot --type=png "$OUT/iphone-$name.png" > /dev/null || { echo "  screenshot failed"; return 0; }
+  sips -Z 1400 "$OUT/iphone-$name.png" > /dev/null || true
+  echo "  captured iphone-$name.png"
 }
 
 shot 1-today     -initialTab today
@@ -91,20 +112,26 @@ shot 4-guide     -initialTab guide
 shot 5-settings  -initialTab settings
 shot 6-urgent    -initialTab today -showUrgentDemo YES
 shot 7-onboarding -showOnboarding YES
-xcrun simctl ui "$IPHONE" appearance dark
+limit 30 xcrun simctl ui "$IPHONE" appearance dark || true
 shot 8-today-dark -initialTab today
-xcrun simctl ui "$IPHONE" appearance light
+limit 30 xcrun simctl ui "$IPHONE" appearance light || true
+limit 60 xcrun simctl shutdown "$IPHONE" || true
 
 # Watch screenshot.
 if [ -n "$WATCH" ]; then
   WATCH_APP=build/DerivedData/Build/Products/Debug-watchsimulator/GlucoseCompanionWatch.app
+  echo "Booting Watch simulator"
   xcrun simctl boot "$WATCH" 2>/dev/null || true
-  xcrun simctl bootstatus "$WATCH" -b > /dev/null
-  xcrun simctl install "$WATCH" "$WATCH_APP"
-  xcrun simctl launch "$WATCH" "$BUNDLE_ID.watchkitapp" -demoMode YES > /dev/null
-  sleep 8
-  xcrun simctl io "$WATCH" screenshot --type=png "$OUT/watch-1-latest.png" > /dev/null
-  echo "Captured watch-1-latest.png"
+  limit 300 xcrun simctl bootstatus "$WATCH" -b > /dev/null || echo "  bootstatus didn't finish; continuing"
+  echo "Installing Watch app"
+  if limit 120 xcrun simctl install "$WATCH" "$WATCH_APP" && \
+     limit 60 xcrun simctl launch "$WATCH" "$BUNDLE_ID.watchkitapp" -demoMode YES > /dev/null; then
+    sleep 8
+    limit 60 xcrun simctl io "$WATCH" screenshot --type=png "$OUT/watch-1-latest.png" > /dev/null \
+      && echo "  captured watch-1-latest.png" || echo "  watch screenshot failed"
+  else
+    echo "  watch install or launch failed"
+  fi
 fi
 
 ls -la "$OUT"

@@ -24,6 +24,7 @@ jobs:
   package:
     name: GlucoseKit tests and sample report
     runs-on: macos-15
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Toolchain
@@ -54,6 +55,7 @@ jobs:
   app:
     name: Build iPhone and Watch apps, capture screenshots
     runs-on: macos-15
+    timeout-minutes: 30
     permissions:
       contents: write
     steps:
