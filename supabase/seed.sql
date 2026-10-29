@@ -1,0 +1,1 @@
+-- Local development seed data for ShutterPaid (applied by `supabase db reset`, never in production).
